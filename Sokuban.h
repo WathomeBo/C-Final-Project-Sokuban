@@ -201,7 +201,7 @@ class GridBoard{
         void save(std::string &path);
 
         //若当前棋盘为有效的，可用的棋盘，则返回true
-        bool isValid()
+        bool isValid();
 
 };
 
@@ -212,7 +212,8 @@ class GameHandler{
     public:
         //add anything you want
         GameHandler();
-        GameHandler(int mode, GridBoard board);
+        //todo: board为初始棋盘，instructors为初始的命令集，若instructors为nullptr，则表示玩家未进行任何移动
+        GameHandler(GridBoard board,std::vector<int> instructors);
 
         //todo：path为本地文件夹的路径，从该文件夹中加载游戏进度,若文件损坏，应有适当标志
         GameHandler(std::string &path);
@@ -240,5 +241,5 @@ class GameHandler{
         void save(std::string &path);
 
         //若当前游戏为有效的，可用的棋盘，则返回true
-        bool isValid()
+        bool isValid();
 };
