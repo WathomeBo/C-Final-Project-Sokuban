@@ -1,17 +1,26 @@
 #include "Sokuban.h"
 
-InnerBox::InnerBox(int x, int y,int flag ,int id, int entrance, GridBoard *inner_space):Object(x,y,flag){
+InnerBox::InnerBox(int flag ,int entrance, GridBoard *inner_space):Object(flag){
     this->entrance=entrance;
-    this->inner_space=inner_space;
-    inner_space->load();
-}
-
-InnerBox::InnerBox(Position &pos,int flag ,int id, int entrance, GridBoard *inner_space):Object(pos,flag){
-    this->entrance=entrance;
-    this->inner_space=inner_space;
-    inner_space->load();
+    loadInnerSpace(inner_space);
 }
 
 InnerBox::~InnerBox(){
-    if(inner_space!=nullptr)inner_space->unload();
+    unloadInnerSpace();
+}
+
+void InnerBox::loadInnerSpace(GridBoard *inner_space){
+    unloadInnerSpace();
+    if(inner_space!=nullptr){
+        inner_space->cnt++;
+        this->inner_space=inner_space;
+    }
+}
+
+void InnerBox::unloadInnerSpace(){
+    if(inner_space!=nullptr){
+        inner_space->cnt--;
+        if(inner_space->cnt==0)delete inner_space;
+        inner_space==nullptr;
+    }
 }
