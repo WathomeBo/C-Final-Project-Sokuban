@@ -92,6 +92,7 @@ bool GameHandler::move(Position &direction){
             if(isGridMovable(extend_grid)){
                 gridboard->moveObject(target_grid,extend_grid);
                 gridboard->moveObject(gridboard->player->grid,target_grid);
+                cmds.push_back(direction2cmd(direction));
                 return true;
             }else return false;
         }
