@@ -1,6 +1,5 @@
 #include "Sokuban.h"
 #include <unordered_map>
-#include <iostream>
 using namespace std;
 
 unordered_map<string,string> DENOTATION;
@@ -16,9 +15,9 @@ void init(){
     DENOTATION.insert({".","Empty"});
 }
 
-char Grid2Char(Grid &grid){
-    if(grid.object==nullptr){
-        switch (grid.type){
+char Grid2Char(Grid *grid){
+    if(grid->object==nullptr){
+        switch (grid->type){
         case Grid::TYPE_CHECK_POINT:
             return '=';
         case Grid::TYPE_STORAGE_POINT:
@@ -29,11 +28,12 @@ char Grid2Char(Grid &grid){
             return '.';
         }
     }else{
-        if(grid.object->type==Object::TYPE_PLAYER && grid.type==Grid::TYPE_CHECK_POINT)return 'p';
-        else if(grid.object->type==Object::TYPE_PLAYER) return 'P';
-        else if(grid.object->type==Object::TYPE_BOX_INNER) return 'o';
-        else if(grid.object->type==Object::TYPE_BOX_NORMAL) return 'O';
+        if(grid->object->type==Object::TYPE_PLAYER && grid->type==Grid::TYPE_CHECK_POINT)return 'p';
+        else if(grid->object->type==Object::TYPE_PLAYER) return 'P';
+        else if(grid->object->type==Object::TYPE_BOX_INNER) return 'o';
+        else if(grid->object->type==Object::TYPE_BOX_NORMAL) return 'O';
     }
+    return 'E';
 }
 
 void printGridboard(GridBoard *gridboard){
@@ -77,6 +77,7 @@ GridBoard* makeMap1(){
 
     box=new Object(Object::TYPE_BOX_NORMAL);
     gridboard->addObject(box,2,2);
+    return gridboard;
 }
 
 int main(){
@@ -84,22 +85,23 @@ int main(){
     GridBoard *map1=makeMap1();
     GameHandler gh(map1);
     printGridboard(map1);
+    cout<<"enter w,s,a,d to move, p to quit\n";
     char cmd;
-    cout<<"enter w,s,a,d to move, p to quit";
     while(cin>>cmd){
+        
         switch (cmd)
         {
         case 'w':
-            gh.moveUp();
+            cout<<gh.moveUp()<<std::endl;
             break;
         case 's':
-            gh.moveDown();
+            cout<<gh.moveDown()<<std::endl;
             break;
         case 'a':
-            gh.moveLeft();
+            cout<<gh.moveLeft()<<std::endl;
             break;
         case 'd':
-            gh.moveRight();
+            cout<<gh.moveRight()<<std::endl;
             break;
         case 'p':
             return 0;
@@ -107,7 +109,11 @@ int main(){
         }
         if(gh.isWin()){
             cout<<"You win!!!\nEnter any key to quit.."<<endl;
+            printGridboard(map1);
             break;
+        }else{
+            printGridboard(map1);
+            cout<<"enter w,s,a,d to move, p to quit\n";
         }
     }
     cin>>cmd;

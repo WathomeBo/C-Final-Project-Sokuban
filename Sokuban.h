@@ -2,6 +2,7 @@
 //采用笛卡尔坐标系，即原点在左上角，水平为x轴，以右为正；纵向为y轴，以下为正。
 
 #include <string>
+#include <iostream>
 #include <unordered_set>
 #include <vector> //c++的vector相当于java的arraylist
 const int UP=0;
@@ -9,7 +10,7 @@ const int DOWN=1;
 const int LEFT=2;
 const int RIGHT=3;
 
-int object_cnt=0;
+static int object_cnt=0;
 
 class Position{
     private:
@@ -31,16 +32,16 @@ class Position{
         }
 
         void moveUp(){
-            y--;
-        }
-        void moveDown(){
-            y++;
-        }
-        void moveLeft(){
             x--;
         }
-        void moveRight(){
+        void moveDown(){
             x++;
+        }
+        void moveLeft(){
+            y--;
+        }
+        void moveRight(){
+            y++;
         }
 
         void extend(){
@@ -53,17 +54,31 @@ class Position{
             y+=pos.y;
         }
 
-        void sign(Position &pos){
+        void asign(Position &pos){
             x=pos.x;
             y=pos.y;
+        }
+
+        void asign(int x, int y){
+            this->x=x;
+            this->y=y;
         }
 
         bool operator==(const Position &pos){
             return x==pos.x && y==pos.y;
         }
 
+        friend std::ostream & operator << (std::ostream &out, const Position &pos){
+            out<<"("<<pos.x<<", "<<pos.y<<") ";
+        }
+
         
 };
+
+class Object;
+class Grid;
+class GridBoard;
+class GameHandler;
 
 //所有可移动的东西，包括箱子，人的父类
 class Object{
@@ -181,8 +196,8 @@ class GridBoard{
         Position& getPlayerPos();
 
         //返回指定位置的grid
-        Grid& getGrid(int x, int y);
-        Grid& getGrid(Position &pos);
+        Grid* getGrid(int x, int y);
+        Grid* getGrid(Position &pos);
 
         //设置grid的type
         void setGridType(int x, int y, int type);
@@ -194,9 +209,9 @@ class GridBoard{
 
         //将可移动物体从from移动到to上,执行成功则返回true,否则返回false,to位置已有object算失败,from位置无object算失败
         bool moveObject(Position &from, Position &to);
-        bool moveObject(Grid &from, Grid &eto);
-        bool moveObject(Grid &from, Position &to);
-        bool moveObject(Position &from, Grid &to);
+        bool moveObject(Grid *from, Grid *eto);
+        bool moveObject(Grid *from, Position &to);
+        bool moveObject(Position &from, Grid *to);
         
         //将object从gridboard中删除，成功删除则返回true，若is_delete为true，还会delete该object，默认为false
         bool removeObject(Object *object);
@@ -242,7 +257,7 @@ class GameHandler{
         bool move(Position &direction);
 
         //返回在当前模式下，该地块是否可以移动上去
-        bool isGridMovable(Grid &grid);
+        bool isGridMovable(Grid *grid);
         bool isGridMovable(Position &grid);
 
         //todo:当n为正数时，将当前棋局设置为第n步的状态，当n为负数时，表示悔棋n步。执行成功则返回true，否则返回false

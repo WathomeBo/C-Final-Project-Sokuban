@@ -24,3 +24,4 @@ void InnerBox::unloadInnerSpace(){
         inner_space==nullptr;
     }
 }
+
